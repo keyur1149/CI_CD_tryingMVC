@@ -45,6 +45,6 @@ jobs:
           FTP_DEPLOY_PATH: '${{ secrets.FTP_DEPLOY_PATH }}'
         run: |
           "C:\Program Files (x86)\WinSCP\WinSCP.com" /command `
-            "open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_HOST/ -passive=on" `
-            "put -delete ./app/* $FTP_DEPLOY_PATH/" `
-            "exit"
+          "open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_HOST/ -passive=on" `
+          "put -delete ./app/* $FTP_DEPLOY_PATH/" `
+          "exit"
