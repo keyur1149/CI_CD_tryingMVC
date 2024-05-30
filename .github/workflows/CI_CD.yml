@@ -34,6 +34,9 @@ jobs:
         with:
           name: app
           path: ./app
+      - name: Install WinSCP
+        run: |
+          choco install winscp -y
       - name: Deploy to Local PC via FTP
         env:
           FTP_HOST: '${{ secrets.FTP_HOST }}'
@@ -41,9 +44,7 @@ jobs:
           FTP_PASSWORD: '${{ secrets.FTP_PASSWORD }}'
           FTP_DEPLOY_PATH: '${{ secrets.FTP_DEPLOY_PATH }}'
         run: |
-          apt-get update
-          apt-get install -y lftp
-          lftp -d -c "
-          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
-          mirror -R ./app $FTP_DEPLOY_PATH
-          "
+          "C:\Program Files (x86)\WinSCP\WinSCP.com" /command `
+            "open ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_HOST/ -passive=on" `
+            "put -delete ./app/* $FTP_DEPLOY_PATH/" `
+            "exit"
