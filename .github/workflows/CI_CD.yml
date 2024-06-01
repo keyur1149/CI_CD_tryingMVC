@@ -16,7 +16,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --output ./build-output
       - name: Publish artifact
         run: dotnet publish --configuration Release --output ./publish
       - name: Upload artifact
@@ -33,21 +33,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app
-          path: ./app
-      - name: Install WinSCP
-        run: |
-          choco install winscp -y
-      - name: Deploy to Local PC via FTP
-        env:
-          FTP_HOST: '${{ secrets.FTP_HOST }}'
-          FTP_USERNAME: '${{ secrets.FTP_USERNAME }}'
-          FTP_PASSWORD: '${{ secrets.FTP_PASSWORD }}'
-          FTP_DEPLOY_PATH: '${{ secrets.FTP_DEPLOY_PATH }}'
-        run: >
-          & "C:\Program Files (x86)\WinSCP\WinSCP.com" /command {
-
-          "open ftp://$env:FTP_USERNAME:$env:FTP_PASSWORD@$env:FTP_HOST/
-          -passive=on"
-           "put -delete ./app/* $env:FTP_DEPLOY_PATH/"
-           "exit"
-           }
+          path: ./publish/
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: '${{ secrets. LIBRARY_TOKEN }}'
+          publish_dir: ./publish/
