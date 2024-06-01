@@ -16,14 +16,14 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Release --output ./build-output
+        run: dotnet build --configuration Release --output ./build_output
       - name: Publish artifact
-        run: dotnet publish --configuration Release --output ./publish
+        run: dotnet publish --configuration Release --output ./publish_output
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: app
-          path: ./publish/
+          path: ./publish_output/
   deploy:
     runs-on: windows-latest
     needs: build
@@ -33,9 +33,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app
-          path: ./publish/
-      - name: Deploy to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
+          path: ./publish_output/
+      - name: Deploy to FTP Server
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
-          github_token: '${{ secrets.TOKEN }}'
-          publish_dir: ./publish/
+          ftp-server: '${{ secrets.FTP_SERVER }}'
+          ftp-username: '${{ secrets.FTP_USERNAME }}'
+          ftp-password: '${{ secrets.FTP_PASSWORD }}'
+          local-dir: ./publish_output
